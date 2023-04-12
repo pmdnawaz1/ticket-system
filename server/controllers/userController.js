@@ -30,8 +30,8 @@ exports.signup = async (req, res) => {
     });
 
     // Hash password and save user to database
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSaltSync(10);
+    user.password = await bcrypt.hashSync(password, salt);
     await user.save();
 
     // Return JWT token for authentication
@@ -70,7 +70,7 @@ exports.login = async (req, res) => {
     }
 
     // Check if password matches
-    const isMatch = await bcrypt.compare(user.password,password);
+    const isMatch = await bcrypt.compareSync(password,user.password);
 
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid credentials" });
