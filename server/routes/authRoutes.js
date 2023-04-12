@@ -12,7 +12,7 @@ router.put('/tickets/:id', authMiddleware, ticketController.updateTicketById);
 router.delete('/tickets/:id', authMiddleware, ticketController.deleteTicketById);
 
 // Users routes
-router.post('/users', userController.createUser);
-router.post('/users/login', userController.login);
+router.post('/signup', userController.signup);
+router.post('/login', userController.login);
 
 module.exports = router;

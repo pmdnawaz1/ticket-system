@@ -5,7 +5,7 @@ const User = require('../models/User');
 const { validationResult } = require('express-validator');
 
 // Signup a new user
-exports.createUser = async (req, res) => {
+exports.signup = async (req, res) => {
   // Validate user input
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

@@ -4,7 +4,7 @@ const userController = require('../controllers/userController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Sign up a new user
-router.post('/signup', authMiddleware, userController.createUser);
+router.post('/signup', authMiddleware, userController.signup);
 
 // Log in an existing user
 router.post('/login', authMiddleware,userController.login);
