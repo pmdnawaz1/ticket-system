@@ -16,7 +16,7 @@ const mongoose = require('mongoose')
 dotenv.config();
 
 // Connect to database
-mongoose.connect('mongodb+srv://pmdnawaz1:Yarasool12@cluster0.vbrmysz.mongodb.net/login?retryWrites=true&w=majority',(err)=>{
+mongoose.connect(process.env.MONGO_URI,(err)=>{
   console.log("Connection Success");
 }
 );

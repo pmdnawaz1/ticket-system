@@ -1,8 +1,8 @@
-
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const { validationResult } = require('express-validator');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const { validationResult } = require("express-validator");
+require('dotenv').config()
 
 // Signup a new user
 exports.signup = async (req, res) => {
@@ -19,14 +19,14 @@ exports.signup = async (req, res) => {
     let user = await User.findOne({ email });
 
     if (user) {
-      return res.status(400).json({ msg: 'User already exists' });
+      return res.status(400).json({ msg: "User already exists" });
     }
 
     // Create new user
     user = new User({
       name,
       email,
-      password
+      password,
     });
 
     // Hash password and save user to database
@@ -37,17 +37,17 @@ exports.signup = async (req, res) => {
     // Return JWT token for authentication
     const payload = {
       user: {
-        id: user.id
-      }
+        id: user.id,
+      },
     };
 
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" }, (err, token) => {
       if (err) throw err;
       res.json({ token });
     });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
 
@@ -66,64 +66,69 @@ exports.login = async (req, res) => {
     let user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
+      return res.status(400).json({ msg: "Invalid credentials" });
     }
 
     // Check if password matches
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
+      return res.status(400).json({ msg: "Invalid credentials" });
     }
 
     // Return JWT token for authentication
     const payload = {
       user: {
-        id: user.id
-      }
+        id: user.id,
+      },
     };
 
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
-      if (err) throw err;
-      res.json({ token });
-    });
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token });
+      }
+    );
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
-
 
 // Get the currently authenticated user
 exports.getCurrentUser = async (req, res) => {
   try {
     // Make sure the user is authenticated
     if (!req.user) {
-      return res.status(401).json({ msg: 'Not authorized' });
+      return res.status(401).json({ msg: "Not authorized" });
     }
 
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select("-password");
     res.json(user);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
 
 // Get a user by ID
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
+    const user = await User.findById(req.params.id).select("-password");
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
+      return res.status(404).json({ msg: "User not found" });
     }
     res.json(user);
   } catch (err) {
     console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'User not found' });
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "User not found" });
     }
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
 
@@ -135,12 +140,12 @@ exports.updateUser = async (req, res) => {
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
+      return res.status(404).json({ msg: "User not found" });
     }
 
     // Make sure the authenticated user is the same as the user being updated
     if (user._id.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'Not authorized' });
+      return res.status(401).json({ msg: "Not authorized" });
     }
 
     user.name = name;
@@ -155,10 +160,10 @@ exports.updateUser = async (req, res) => {
     res.json(savedUser);
   } catch (err) {
     console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'User not found' });
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "User not found" });
     }
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
 
@@ -168,21 +173,21 @@ exports.deleteUser = async (req, res) => {
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
+      return res.status(404).json({ msg: "User not found" });
     }
 
     // Make sure the authenticated user is the same as the user being deleted
     if (user._id.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'Not authorized' });
+      return res.status(401).json({ msg: "Not authorized" });
     }
 
     await user.remove();
-    res.json({ msg: 'User removed' });
+    res.json({ msg: "User removed" });
   } catch (err) {
     console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'User not found' });
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "User not found" });
     }
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
