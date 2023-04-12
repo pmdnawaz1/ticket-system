@@ -70,8 +70,7 @@ exports.login = async (req, res) => {
     }
 
     // Check if password matches
-    const isMatch = await bcrypt.compare(password, user.password);
-    console.log(password, user.password);
+    const isMatch = await bcrypt.compare(user.password,password);
 
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid credentials" });
@@ -98,6 +97,7 @@ exports.login = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
 
 // Get the currently authenticated user
 exports.getCurrentUser = async (req, res) => {
