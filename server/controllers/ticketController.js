@@ -47,8 +47,7 @@ exports.createTicket = async (req, res) => {
     // Create new ticket instance
     const ticket = new Ticket({
       title,
-      description,
-      user: req.user.id,
+      description
     });
 
     // Save the ticket to the database

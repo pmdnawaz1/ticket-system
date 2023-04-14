@@ -64,7 +64,7 @@ exports.login = async (req, res) => {
   try {
     // Check if user exists
     let user = await User.findOne({ email });
-
+ console.log(user)
     if (!user) {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
@@ -97,7 +97,6 @@ exports.login = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
-
 
 // Get the currently authenticated user
 exports.getCurrentUser = async (req, res) => {
